@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "syncerr"
+version = "0.1.0"
+description = "sync watched video between plex and jellyfin"
+authors = ["Dhruvin Shah <dhruvin3@gmail.com>"]
+license = "GPL3"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+omegaconf = "^2.2.3"
+httpx = "^0.23.0"
+
+[tool.poetry.dev-dependencies]
+black = "^22.8.0"
+mypy = "^0.971"
+isort = "^5.10.1"
+pylint = "^2.15.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
