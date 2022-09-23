@@ -164,3 +164,50 @@ class Jellyfin:
 
         return item_detail
 
+
+
+def currently_playing(jf: Jellyfin):
+    """
+    With the help of jellyfin api find the status of currently playing video contents.
+    :param jf: jellyfin object
+    """
+    jf.authenitcate()
+    items = jf.currently_playing()
+    for item in items:
+        details = jf.get_details(item.get("Id"))  # type: ignore
+
+        # percentage do not appear when video is about to end or about to start in
+        # that case need to pull the data from Played flag
+        # if PlayedPercentage:
+        #   use it
+        # elif Played == True:
+        #   100% done --> almost finished playing or just done
+        # elif Played == False:
+        #   0% done --> just started playing
+        try:
+            percentage = details["UserData"]["PlayedPercentage"]
+        except KeyError:
+            if details["UserData"]["Played"]:
+                percentage = 100.00
+            else:
+                percentage = 0.00
+
+        # Currently API works with Episode or Movie only
+        if details["Type"] == "Episode":
+            jf.logger.info(
+                "Currently playing: %s - %s - %s -> Currently Played: %0.3f%%",
+                details["SeriesName"],
+                details["SeasonName"],
+                details["Name"],
+                percentage,
+            )
+        elif details["Type"] == "Movie":
+            jf.logger.info(
+                "Currently playing: %s --> Currently Played: %0.3f%%",
+                details["Name"],
+                percentage,
+            )
+        else:
+            jf.logger.error(
+                "For %s unknow type found: %s", details["Name"], details["Type"]
+            )
