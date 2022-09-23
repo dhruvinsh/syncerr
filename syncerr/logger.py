@@ -17,7 +17,7 @@ def create_logger(name: str = __name__, level: int = LEVEL) -> logging.Logger:
     :param name: logger name, default set to __name__
     :param level: log level, defautl set to INFO via config
     """
-    fmt: str = "%(asctime)s: %(name)-10s: %(levelname)-8s: %(message)s"
+    fmt: str = "%(asctime)s: %(name)-10s:%(funcName)20s: %(levelname)-8s: %(message)s"
     formatter: logging.Formatter = logging.Formatter(fmt)
 
     # pylint: disable=redefined-outer-name
