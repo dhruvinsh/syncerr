@@ -74,13 +74,13 @@ class Jellyfin:
 
         return res
 
-    def current_playing(self) -> list[dict[str, Any]]:
+    def currently_playing(self) -> list[dict[str, Any]]:
         """
         Get currently playing media.
 
-        endpoint: /Sessions
-        type: GET
-        params: { "controllableByUserId": str, "activeWithinSeconds": int }
+        ENDPOINT: /Sessions
+        TYPE: GET
+        PARAMS: {"activeWithinSeconds": int }
 
         NOTE: params are options but setting them helps for fater requests.
         """
