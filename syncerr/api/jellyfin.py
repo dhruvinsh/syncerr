@@ -3,7 +3,7 @@ Author: Dhruvin Shah
 Very minimal endpoints added here that just get work done
 """
 
-from typing import Any
+from typing import Any, Optional
 
 import httpx
 
@@ -56,6 +56,41 @@ class Jellyfin:
         # updating header for httpx session
         self.sess.headers.update(headers)  # type: ignore
 
+    def _call(
+        self,
+        method: str,
+        url: str,
+        *,
+        filter_keys: Optional[list[str]] = None,
+        **kwargs,
+    ) -> Any:
+        """
+        General method to call url. It returns the json object and applies filter_keys
+        to it befor that.
+
+        :param method: method to use to call the url, valid values are get, post
+        :param url: endpoint that need to call
+        :param filter_keys: for jsonified object applie filter to obtain certain keys
+                            only
+        :param kwargs: all the options that applies to rest call
+        """
+        assert method in ["get", "post"]
+
+        fetch = getattr(self.sess, method)
+        resp = fetch(url, **kwargs)
+        res = resp.json()
+
+        keys = [] if filter_keys is None else filter_keys
+
+        if not keys:
+            return res
+
+        # if response is list of dicts then filter need to apply to each dict
+        if isinstance(res, list):
+            return list(map(lambda r: filter_dict(r, keys=keys), res))
+
+        return filter_dict(res, keys)
+
     def authenitcate(self) -> dict[str, Any]:
         """
         Authentication for jellyfin
@@ -65,11 +100,9 @@ class Jellyfin:
         payload: { "Username": str, "Pw": str }
         """
         url = self.url + "/Users/AuthenticateByName"
-        payload = {"Username": self.username, "Pw": self.password}
+        data = {"Username": self.username, "Pw": self.password}
 
-        resp = self.sess.post(url, json=payload)
-
-        res = resp.json()
+        res = self._call("post", url, json=data)
         self.logger.debug("authentication: %s", res)
 
         return res
@@ -88,14 +121,10 @@ class Jellyfin:
         # get active session in last 16 min
         params = {"activeWithinSeconds": 960}
 
-        resp = self.sess.get(url, params=params)
-
-        # list of SessionInfo schema
-        sessions = resp.json()
-
+        # call to endpoint get list of SessionInfo schema
         # get list of data with NowPlayingItem: {...} only
-        play_sessions = list(
-            map(lambda s: filter_dict(s, keys=["NowPlayingItem"]), sessions)
+        play_sessions = self._call(
+            "get", url, filter_keys=["NowPlayingItem"], params=params
         )
         self.logger.debug(play_sessions)
 
@@ -139,9 +168,7 @@ class Jellyfin:
         PARAMS: BaseItemDto {...}
         """
         url = self.url + f"/Users/{self.userid}/Items/{item}"
-        resp = self.sess.get(url)
 
-        res = resp.json()
         # filter keys that I need from BaseItemDto
         keys = [
             "Id",
@@ -159,7 +186,7 @@ class Jellyfin:
             "Type",
             "UserData",
         ]
-        item_detail = filter_dict(res, keys=keys)
+        item_detail = self._call("get", url, filter_keys=keys)
         self.logger.debug(item_detail)
 
         return item_detail
