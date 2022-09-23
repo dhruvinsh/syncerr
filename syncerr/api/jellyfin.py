@@ -28,7 +28,7 @@ class Jellyfin:
     VERSION: str = "1.0.0"
 
     def __init__(self, url: str, username: str, password: str) -> None:
-        self.logger = create_logger("jellyfin")
+        self.logger = create_logger(self.__class__.__name__)
 
         self.url: str = url
         self.username = username
