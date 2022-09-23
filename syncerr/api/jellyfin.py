@@ -86,7 +86,7 @@ class Jellyfin:
         """
         url = self.url + "/Sessions"
         # get active session in last 16 min
-        params = {"controllableByUserId": self.userid, "activeWithinSeconds": 960}
+        params = {"activeWithinSeconds": 960}
 
         resp = self.sess.get(url, params=params)
 
