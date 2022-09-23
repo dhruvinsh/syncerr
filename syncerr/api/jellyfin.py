@@ -128,3 +128,39 @@ class Jellyfin:
 
         self.logger.info("found total %s items being played.", len(items))
         return items
+
+    def get_details(self, item: str) -> dict[str, Any]:
+        """
+        For given item id get the details
+        :param item: id to get details
+
+        ENDPOINT: /Users/{userId}/Items/{itemId}
+        TYPE: GET
+        PARAMS: BaseItemDto {...}
+        """
+        url = self.url + f"/Users/{self.userid}/Items/{item}"
+        resp = self.sess.get(url)
+
+        res = resp.json()
+        # filter keys that I need from BaseItemDto
+        keys = [
+            "Id",
+            "IndexNumber",  # potential episode number
+            "Name",
+            "ParentIndexNumber",  # potential season number
+            "Path",
+            "RunTimeTicks",
+            "SeasonId",
+            "SeasonName",
+            "SeriesId",
+            "SeriesName",
+            "SortName",
+            # to see if its movie or series, value could be Episode or Movie
+            "Type",
+            "UserData",
+        ]
+        item_detail = filter_dict(res, keys=keys)
+        self.logger.debug(item_detail)
+
+        return item_detail
+
