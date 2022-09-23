@@ -92,15 +92,19 @@ class Jellyfin:
 
         # list of SessionInfo schema
         sessions = resp.json()
-        self.logger.debug("current_playing: %s", sessions)
+
+        # get list of data with NowPlayingItem: {...} only
+        play_sessions = list(
+            map(lambda s: filter_dict(s, keys=["NowPlayingItem"]), sessions)
+        )
+        self.logger.debug(play_sessions)
 
         items = []
-        for session in sessions:
-            if "NowPlayingItem" not in session:
+        for session in play_sessions:
+            if not session:
                 continue
 
-            now_playing = session["NowPlayingItem"]
-            # session with NowPlayingItem, apply below fiter to get specific data only
+            # out of NowPlayingItem session get specific data only
             filter_keys: list[str] = [
                 "Name",
                 "Id",
@@ -113,13 +117,14 @@ class Jellyfin:
                 "SeasonName",
             ]
 
-            now_playing = filter_dict(now_playing, keys=filter_keys)
+            now_playing = filter_dict(session["NowPlayingItem"], keys=filter_keys)
             if not now_playing:
                 # looks like filter is broken its not wokring
                 self.logger.error("Not able find any data from NowPlayingItem")
                 continue
 
-            self.logger.info("Currently playing: %s", now_playing["Name"])
+            self.logger.debug(now_playing)
             items.append(now_playing)
 
+        self.logger.info("found total %s items being played.", len(items))
         return items
