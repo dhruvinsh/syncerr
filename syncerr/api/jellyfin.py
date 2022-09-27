@@ -193,15 +193,16 @@ class Jellyfin:
 
 
 
-def currently_playing(jf: Jellyfin):
+def currently_playing(jf: Jellyfin) -> list[dict[str, Any]]:
     """
     With the help of jellyfin api find the status of currently playing video contents.
     :param jf: jellyfin object
     """
     jf.authenitcate()
     items = jf.currently_playing()
+    details: list[dict[str, Any]] = []
     for item in items:
-        details = jf.get_details(item.get("Id"))  # type: ignore
+        detail = jf.get_details(item.get("Id"))  # type: ignore
 
         # percentage do not appear when video is about to end or about to start in
         # that case need to pull the data from Played flag
@@ -212,29 +213,33 @@ def currently_playing(jf: Jellyfin):
         # elif Played == False:
         #   0% done --> just started playing
         try:
-            percentage = details["UserData"]["PlayedPercentage"]
+            percentage = detail["UserData"]["PlayedPercentage"]
         except KeyError:
-            if details["UserData"]["Played"]:
+            if detail["UserData"]["Played"]:
                 percentage = 100.00
             else:
                 percentage = 0.00
 
         # Currently API works with Episode or Movie only
-        if details["Type"] == "Episode":
+        if detail["Type"] == "Episode":
             jf.logger.info(
                 "Currently playing: %s - %s - %s -> Currently Played: %0.3f%%",
-                details["SeriesName"],
-                details["SeasonName"],
-                details["Name"],
+                detail["SeriesName"],
+                detail["SeasonName"],
+                detail["Name"],
                 percentage,
             )
-        elif details["Type"] == "Movie":
+        elif detail["Type"] == "Movie":
             jf.logger.info(
                 "Currently playing: %s --> Currently Played: %0.3f%%",
-                details["Name"],
+                detail["Name"],
                 percentage,
             )
         else:
             jf.logger.error(
-                "For %s unknow type found: %s", details["Name"], details["Type"]
+                "For %s unknow type found: %s", detail["Name"], detail["Type"]
             )
+            
+        detail["percentage"] = percentage
+        details.append(detail)
+    return details
