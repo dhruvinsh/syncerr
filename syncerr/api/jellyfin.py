@@ -30,7 +30,7 @@ class Jellyfin:
     def __init__(self, url: str, username: str, password: str) -> None:
         self.logger = create_logger(self.__class__.__name__)
 
-        self.url: str = url
+        self.url = url.rstrip("/")
         self.username = username
         self.password = password
 
