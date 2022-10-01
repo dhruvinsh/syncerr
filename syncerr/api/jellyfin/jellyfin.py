@@ -146,6 +146,7 @@ class Jellyfin:
                 "SeasonName",
             ]
 
+            # TODO: fetch details here
             now_playing = filter_dict(session["NowPlayingItem"], keys=filter_keys)
             if not now_playing:
                 # looks like filter is broken its not wokring
@@ -191,6 +192,27 @@ class Jellyfin:
 
         return item_detail
 
+    def played_items(self) -> dict[str, Any]:
+        """
+        Get already played items.
+
+        ENDPOINT: /Users/{userId}/Items
+        TYPE: GET
+        PARAMS: Huge lists. look at the API
+        """
+        url = self.url + f"/Users/{self.userid}/Items"
+        # currently jellyfin only supports Movies and Series only
+        params = {
+            "includeItemTypes": ["Movie", "Series"],
+            "isPlayed": True,
+        }
+
+        resp = self.sess.get(url, params=params)
+
+        res = resp.json()
+        self.logger.debug(res)
+
+        return res
 
 
 def currently_playing(jf: Jellyfin) -> list[dict[str, Any]]:
@@ -239,7 +261,7 @@ def currently_playing(jf: Jellyfin) -> list[dict[str, Any]]:
             jf.logger.error(
                 "For %s unknow type found: %s", detail["Name"], detail["Type"]
             )
-            
+
         detail["percentage"] = percentage
         details.append(detail)
     return details
