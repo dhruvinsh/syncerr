@@ -3,12 +3,12 @@ author: Dhruvin Shah
 very minimal plex api that just works.
 """
 
+import logging
 from json.decoder import JSONDecodeError
 from typing import Any, Union
 
 import httpx
 
-from syncerr.logger import create_logger
 from syncerr.util import filter_dict
 
 
@@ -16,12 +16,14 @@ class Plex:
     """
     Minimal Plex api
 
-    :param url: plex server url
-    :param token: authentication token for the given plex server
-    :param appname: app name to set when accessing plex instance, default to syncerr
     """
 
     def __init__(self, url: str, token: str, appname: str = "syncerr") -> None:
+        """
+        :param url: plex server url
+        :param token: authentication token for the given plex server
+        :param appname: app name to set when accessing plex instance, default to syncerr
+        """
         self.url = url.rstrip("/")
         self.token = token
         self.appname = appname
@@ -39,7 +41,7 @@ class Plex:
             "X-Plex-Language": "en",
         }
         self.sess = httpx.Client(headers=headers)
-        self.logger = create_logger(self.__class__.__name__)
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     def _call(
         self,
@@ -68,7 +70,6 @@ class Plex:
             res = resp.json().get("MediaContainer", {})
         except JSONDecodeError:
             self.logger.error("json decoding error")
-            breakpoint()
 
         # TODO: figure out better way, this is ugly hack!!
         if filter_keys:

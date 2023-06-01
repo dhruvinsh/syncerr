@@ -1,15 +1,29 @@
 """
 Main module
 """
+import logging
 import time
 
-from config import cfg
 from syncerr import Jellyfin, Plex, currently_playing
-from syncerr.logger import logger
+from syncerr.config import cfg
+from syncerr.engine import HttpEngine
+from syncerr.logger import setup_logger
+
+try:
+    LEVEL = getattr(logging, str.upper(cfg.LOG_LEVEL))
+except AttributeError:
+    LEVEL = logging.INFO
+
+setup_logger(LEVEL)
+logger = logging.getLogger("syncerr")
 
 jellyfin = Jellyfin(
-    cfg.JELLYFIN_URL, username=cfg.JELLYFIN_USERNAME, password=cfg.JELLYFIN_PASSWORD
+    cfg.JELLYFIN_URL,
+    username=cfg.JELLYFIN_USERNAME,
+    password=cfg.JELLYFIN_PASSWORD,
+    engine=HttpEngine,
 )
+breakpoint()
 # Fetch currently playing media on Jellyfin
 jf_media = currently_playing(jellyfin)
 
@@ -44,7 +58,8 @@ for jm in jf_media:
         if jf_media_name.lower() == pm["title"].lower():
             # we found the match in plex
             if IS_MOVIE:
-                # since media type is movie on jellyfin it is easy to push progress on plex
+                # since media type is movie on jellyfin it is easy to push progress on
+                # plex
                 plex.mark_status(pm, progress=jm["percentage"])
                 logger.info("Movie update pushed to Plex")
             else:
