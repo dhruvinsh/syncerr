@@ -11,7 +11,8 @@ It is currently in alpha stage. Current implementation (including hack script) a
 Below are plan list and they are in order,
 
 - [x] Jellyfin currently playing media sync to Plex
-- [x] Multiuser support for Jellyfin to Plex
+- [x] Multi-user support for Jellyfin to Plex
+- [ ] Synchronous API for Jellyfin and Plex
 - [ ] Implement proper run Job
 - [ ] Jellyfin already played media sync to Plex
 - [ ] Plex currently playing media sync to Plex
