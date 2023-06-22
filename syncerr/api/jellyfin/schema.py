@@ -66,14 +66,14 @@ class Movie(BaseModel):
 
     mappings:
         name: Name,
-        id: Id,
+        item_id: Id,
         run_time: RunTimeTicks,
         details: Detail
         category: "movie"
     """
 
     name: str
-    id: str
+    item_id: str
     run_time: int
     details: Detail
     category: str = "movie"
