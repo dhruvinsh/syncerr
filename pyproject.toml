@@ -19,16 +19,22 @@ ipython = "^8.14.0"
 black = ">=22.8.0"
 mypy = ">=0.971"
 isort = ">=5.10.1"
-pylint = ">=2.15.2"
+ruff = "^0.0.277"
 
-[tool.pylint]
-disable = ["R0903"]
+[tool.ruff]
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # pyflakes
+  "I",  # isort
+  "C",  # flake8-comprehensions
+  "B",  # flake8-bugbear
+  "D",  # pydocstyle
+  "UP", # pyupgrade
+]
 
-[tool.pylint.format]
-max-line-length = "88"
-
-[tool.pylint.message_control]
-extension-pkg-whitelist = "pydantic"
+[tool.ruff.pydocstyle]
+convention = "google"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
