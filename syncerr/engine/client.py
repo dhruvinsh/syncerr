@@ -1,6 +1,6 @@
-"""
-HTTP Engine to make request to relevent API server
-"""
+"""HTTP Engine to make request to relevent API server."""
+
+from typing import Any
 
 import httpx
 from pydantic import Json
@@ -9,18 +9,17 @@ from syncerr.util import filter_dict
 
 
 class HttpEngine:
-    """
-    HTTP Engine to deal with rest API
+    """HTTP Engine to deal with rest API."""
 
-    :param kwargs: any parameters that applies to `httpx.Client`
-    """
+    def __init__(self, **kwargs: Any) -> None:
+        """Bootstrap the HttpEngine.
 
-    def __init__(self, **kwargs) -> None:
+        :param kwargs: any parameters that applies to `httpx.Client`
+        """
         self.session = httpx.Client(follow_redirects=True, **kwargs)
 
-    def _call(self, method: str, url: str, **kwargs) -> httpx.Response:
-        """
-        generic call method for rest API
+    def _call(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
+        """Generic call method for rest API.
 
         :param method: type of method for httpx session
         :param url: url to fetch/send data to
@@ -37,10 +36,12 @@ class HttpEngine:
             case _:
                 raise httpx.RequestError(f"Not able to fetch data: {url}")
 
-    def get(self, url: str, *, filter_keys: list[str] = [], **kwargs) -> Json:
-        """
-        General method to call url. It returns the json object and applies filter_keys
-        to it befor that.
+    def get(
+        self, url: str, *, filter_keys: list[str] | None = None, **kwargs: Any
+    ) -> Json[Any]:
+        """General method to call url.
+
+        It returns the json object and applies filter_keys to it befor that.
 
         :param url: endpoint that need to call
         :param filter_keys: for jsonified object applie filter to obtain certain keys
@@ -50,18 +51,19 @@ class HttpEngine:
         resp = self._call("get", url, **kwargs)
         res = resp.json()
 
-        if not filter_keys:
+        if filter_keys is None:
             return res
 
         # if response is list of dicts then filter need to apply to each dict
         if isinstance(res, list):
-            return list(map(lambda r: filter_dict(r, keys=filter_keys), res))
+            return [filter_dict(r, filter_keys) for r in res]
 
         return filter_dict(res, filter_keys)
 
-    def post(self, url: str, **kwargs) -> httpx.Response:
-        """
+    def post(self, url: str, json: Any | None = None) -> httpx.Response:
+        """Send post request.
+
         :param url: pass url to make post request
         :param kwargs: all the key arguments passed to httpx client's post requests
         """
-        return self._call("post", url, **kwargs)
+        return self._call("post", url, json=json)

@@ -1,16 +1,13 @@
-"""
-Some utility functions
-"""
+"""Some utility functions."""
 
 import logging
-from typing import Any, Optional
+from typing import TypeVar
 
-from pydantic import Json
+T = TypeVar("T")
 
 
-def filter_dict(dikt: dict[Any, Any], keys: Optional[list[str]] = None) -> Json:
-    """
-    For given dict drop all the keys except the one provided as keys
+def filter_dict(dikt: T, keys: list[str] | None = None) -> T:
+    """For given dict drop all the keys except the one provided as keys.
 
     :param dikt: dict object that require some filtering
     :param keys: values of keys that need to keep

@@ -1,6 +1,4 @@
-"""
-Central config module
-"""
+"""Central config module."""
 
 import logging
 from pathlib import Path

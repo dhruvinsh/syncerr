@@ -1,0 +1,4 @@
+{
+    "python.analysis.inlayHints.callArgumentNames": true,
+    "python.analysis.inlayHints.functionReturnTypes": true
+}

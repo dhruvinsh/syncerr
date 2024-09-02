@@ -9,8 +9,8 @@ from pydantic import BaseModel
 
 
 class Detail(BaseModel):
-    """
-    MovieDetail data holder for Plex.
+    """MovieDetail data holder for Plex.
+
     It is purerly here just to mimic jellyfin API. Which in my opinion is good.
     """
 
@@ -23,8 +23,8 @@ class Detail(BaseModel):
 
 
 class Movie(BaseModel):
-    """
-    Movie data holder Plex.
+    """Movie data holder Plex.
+
     {
       "ratingKey": "1",
       "key": "/library/metadata/1",
@@ -49,8 +49,7 @@ class Movie(BaseModel):
 
 
 class Series(BaseModel):
-    """
-    Series data holder for Jellyfin.
+    """Series data holder for Plex.
 
     {
       "ratingKey": "1498",
@@ -94,8 +93,7 @@ class Series(BaseModel):
 
 
 class Season(BaseModel):
-    """
-    Season data holder for Jellyfin.
+    """Season data holder for Plex.
 
     {
       "ratingKey": "1498",
@@ -141,8 +139,7 @@ class Season(BaseModel):
 
 
 class Episode(BaseModel):
-    """
-    Episode data holder for Jellyfin.
+    """Episode data holder for Plex.
 
     {
       "ratingKey": "1498",

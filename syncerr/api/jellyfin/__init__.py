@@ -1,7 +1,6 @@
-"""
-Jellyfin API with schema
-"""
+"""Jellyfin API with schema."""
 
-from .jellyfin import Jellyfin, currently_playing
+from .jellyfin import Jellyfin
+from .media import JellyfinMedia, currently_playing
 
-__all__: list[str] = ["Jellyfin", "currently_playing"]
+__all__ = ["Jellyfin", "JellyfinMedia", "currently_playing"]
