@@ -1,6 +1,7 @@
 """Central config module."""
 
 import logging
+from dataclasses import dataclass
 from pathlib import Path
 
 from omegaconf import OmegaConf
@@ -8,9 +9,28 @@ from omegaconf import OmegaConf
 BASE_PATH: Path = Path(".")
 CONFIG_PATH = BASE_PATH / "config.yaml"
 
-cfg = OmegaConf.load(CONFIG_PATH)
+
+@dataclass
+class ConfigTypes:
+    """Config validation type check."""
+
+    LOG_LEVEL: str
+    JELLYFIN_URL: str
+    JELLYFIN_USERNAME: str
+    JELLYFIN_PASSWORD: str
+
+    PLEX_URL: str
+    PLEX_TOKEN: str
+
+
+schema = OmegaConf.structured(ConfigTypes)
+conf = OmegaConf.load(CONFIG_PATH)
+
+cfg = OmegaConf.merge(schema, conf)
 
 try:
-    LEVEL = getattr(logging, str.upper(cfg.LOG_LEVEL))
+    level = getattr(logging, str.upper(cfg.LOG_LEVEL))
 except AttributeError:
-    LEVEL = logging.INFO
+    level = logging.INFO
+
+LEVEL = level
