@@ -55,7 +55,6 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pyright]
-venvPath = "/Users/ds/Library/Caches/pypoetry/virtualenvs"
-venv = "syncerr-UKNG5CTP-py3.11"
 pythonVersion = "3.11"
 pythonPlatform = "Linux"
+typeCheckingMode = "strict"

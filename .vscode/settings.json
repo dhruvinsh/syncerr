@@ -1,4 +1,10 @@
 {
-    "python.analysis.inlayHints.callArgumentNames": true,
-    "python.analysis.inlayHints.functionReturnTypes": true
+  "editor.inlayHints.enabled": "on",
+  "python.analysis.inlayHints.callArgumentNames": "partial",
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.inlayHints.variableTypes": true,
+  "mypy-type-checker.args": ["--config-file=pyproject.toml"],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "python.analysis.typeCheckingMode": "strict"
 }
