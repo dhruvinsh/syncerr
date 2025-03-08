@@ -1,0 +1,13 @@
+# logging level
+# valid values are, error, warning, info and debug
+LOG_LEVEL: ${oc.env:SYNCERR_LOG_LEVEL,INFO}
+
+# plex config
+PLEX_URL: ${oc.env:PLEX_URL}
+# https://www.plexopedia.com/plex-media-server/general/plex-token/
+PLEX_TOKEN: ${oc.env:PLEX_TOKEN}
+
+# jellyfin config
+JELLYFIN_URL: ${oc.env:JELLYFIN_URL}
+JELLYFIN_USERNAME: ${oc.env:JELLYFIN_USERNAME}
+JELLYFIN_PASSWORD: ${oc.env:JELLYFIN_PASSWORD}
