@@ -1,22 +1,20 @@
-[tool.poetry]
+[project]
 name = "syncerr"
 version = "0.1.0"
 description = "Sync watched video between Jellyfin and Plex."
-authors = ["Dhruvin Shah <dhruvin3@gmail.com>"]
+readme = "README.md"
+authors = [{ name = "Dhruvin Shah", email = "dhruvin3@gmail.com" }]
 license = "GPL3"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "omegaconf>=2.3.0",
+    "pydantic>=2.10.6",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-httpx = "^0.23.0"
-loguru = "^0.7.2"
-omegaconf = "^2.2.3"
-pydantic = "^1.10.2"
-
-[tool.poetry.group.dev.dependencies]
-debugpy = "^1.8.0"
-ipython = "^8.14.0"
-mypy = ">=0.971"
-ruff = ">=0.0.277"
+[dependency-groups]
+dev = ["debugpy>=1.8.13", "ipython>=9.0.1", "mypy>=1.15.0", "ruff>=0.9.9"]
 
 [tool.mypy]
 plugins = ["pydantic.mypy"]
@@ -55,6 +53,6 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pyright]
-pythonVersion = "3.11"
+pythonVersion = "3.12"
 pythonPlatform = "Linux"
 typeCheckingMode = "strict"
