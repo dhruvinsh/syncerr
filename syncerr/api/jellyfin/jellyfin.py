@@ -1,7 +1,8 @@
 """Minimal Jellyfin api for syncerr.
 
-This module provides a minimal API client for interacting with a Jellyfin server within the syncerr ecosystem.
-It supports authentication via username and password, retrieval of media details, and fetching of currently playing sessions.
+This module provides a minimal API client for interacting with a Jellyfin server within
+the syncerr ecosystem. It supports authentication via username and password, retrieval
+of media details, and fetching of currently playing sessions.
 """
 
 import sys
@@ -21,8 +22,8 @@ if TYPE_CHECKING:
 class Jellyfin:
     """Jellyfin API.
 
-    This class implements a minimal API client for interacting with a Jellyfin media server.
-    Currently, authentication is done via username and password for Jellyfin.
+    This class implements a minimal API client for interacting with a Jellyfin media
+    server. Currently, authentication is done via username and password for Jellyfin.
     It supports engine building, session authentication, and fetching media details.
     """
 
@@ -39,16 +40,19 @@ class Jellyfin:
 
         This constructor sets up the Jellyfin API client by storing the server URL,
         user credentials, and initializing the HTTP engine for subsequent API calls.
-        It also ensures that the URL does not have a trailing slash and configures the engine with appropriate headers.
+        It also ensures that the URL does not have a trailing slash and configures the
+        engine with appropriate headers.
 
         Args:
             url (str): Jellyfin server URL.
             username (str): Jellyfin username.
             password (str): Jellyfin password.
-            engine (type[HttpEngine]): An HTTP engine class used for making API requests.
+            engine (type[HttpEngine]): An HTTP engine class used for making API
+            requests.
 
         Note:
-            The provided engine should support header configuration and REST API call methods.
+            The provided engine should support header configuration and REST API call
+            methods.
         """
         self.url = url.rstrip("/")
         self.username = username
@@ -59,14 +63,17 @@ class Jellyfin:
     def build_engine(self, engine: type["HttpEngine"]) -> "HttpEngine":
         """Build and configure the HTTP engine with the necessary headers.
 
-        This method instantiates the provided HTTP engine with Jellyfin-specific headers for client identification,
-        and then performs authentication to obtain an access token. The engine is subsequently updated with these credentials.
+        This method instantiates the provided HTTP engine with Jellyfin-specific headers
+        for client identification, and then performs authentication to obtain an access
+        token. The engine is subsequently updated with these credentials.
 
         Args:
-            engine (type[HttpEngine]): The HTTP engine class used for making API requests.
+            engine (type[HttpEngine]): The HTTP engine class used for making API
+            requests.
 
         Returns:
-            HttpEngine: A configured HTTP engine instance with updated authentication headers.
+            HttpEngine: A configured HTTP engine instance with updated authentication
+            headers.
         """
         # NOTE: all values in the header are case-sensitive
         emby_auth = (
@@ -106,7 +113,8 @@ class Jellyfin:
         """Get the authentication status.
 
         Returns:
-            bool: True if the client is authenticated with the Jellyfin server, False otherwise.
+            bool: True if the client is authenticated with the Jellyfin server, False
+            otherwise.
         """
         return self._is_authenticated
 
@@ -119,16 +127,16 @@ class Jellyfin:
         """Authenticate the client against the Jellyfin server.
 
         This method performs authentication using the provided username and password.
-        A POST request is sent to the /Users/authenticatebyname endpoint with a payload containing
-        the credentials. Note that the API requires admin user privileges for complete access,
-        and non-admin users might not be able to fully utilize the API.
+        A POST request is sent to the /Users/authenticatebyname endpoint with a payload
+        containing the credentials. Note that the API requires admin user privileges for
+        complete access, and non-admin users might not be able to fully utilize the API.
 
         Args:
             session (HttpEngine): The HTTP engine instance used to make the request.
 
         Returns:
-            dict | None: A JSON dictionary containing authentication details if the request is successful;
-            otherwise, None is returned.
+            dict | None: A JSON dictionary containing authentication details if the
+            request is successful; otherwise, None is returned.
 
         Note:
             If authentication fails (HTTP status code is not 200), an error is logged.
@@ -150,12 +158,14 @@ class Jellyfin:
     def get_details(self, item_id: str) -> Json[Any]:
         """Retrieve media details for a given item.
 
-        This method sends a GET request to the Jellyfin API to fetch details for a specified media item.
-        It calls the endpoint /Users/{userId}/Items/{item_id} and expects a JSON response containing
-        information such as index numbers, names, paths, runtime, and user data.
+        This method sends a GET request to the Jellyfin API to fetch details for a
+        specified media item. It calls the endpoint /Users/{userId}/Items/{item_id} and
+        expects a JSON response containing information such as index numbers, names,
+        paths, runtime, and user data.
 
         Args:
-            item_id (str): The identifier of the media item for which details should be retrieved.
+            item_id (str): The identifier of the media item for which details should be
+            retrieved.
 
         Returns:
             Json[Any]: A JSON object containing the details of the media item.
@@ -190,17 +200,20 @@ class Jellyfin:
     def now_playing_json(self, active_time: int = 900) -> Json[Any]:
         """Retrieve a list of currently playing media items in JSON format.
 
-        This method queries the /Sessions endpoint to obtain active media sessions within a specified time window.
+        This method queries the /Sessions endpoint to obtain active media sessions
+        within a specified time window.
         It filters the session data to extract only the media item IDs and types.
 
         Args:
-            active_time (int, optional): Time in seconds to consider a session as active (default is 900 seconds).
+            active_time (int, optional): Time in seconds to consider a session as active
+            (default is 900 seconds).
 
         Returns:
             list: A list of JSON objects each representing a playing media item.
-            
+
         Note:
-            Specifying the 'activeWithinSeconds' parameter helps optimize the API response.
+            Specifying the 'activeWithinSeconds' parameter helps optimize the API
+            response.
         """
         if not self.is_authenticated:
             raise ValueError("Authentication is required for jellyfin")
@@ -234,14 +247,16 @@ class Jellyfin:
     def now_playing(self, active_time: int = 900) -> list[Movie | Episode]:
         """Fetch a list of recently played media items.
 
-        This method retrieves media items (movies or episodes) that are actively playing or have been recently played,
-        based on the specified time window.
+        This method retrieves media items (movies or episodes) that are actively playing
+        or have been recently played, based on the specified time window.
 
         Args:
-            active_time (int, optional): Time in seconds to consider a session as active. Defaults to 900 (15 minutes).
+            active_time (int, optional): Time in seconds to consider a session as
+            active. Defaults to 900 (15 minutes).
 
         Returns:
-            list[Movie | Episode]: A list of media item objects representing movies or episodes.
+            list[Movie | Episode]: A list of media item objects representing movies or
+            episodes.
         """
         res: list[Movie | Episode] = []
         items = self.now_playing_json(active_time)
@@ -261,15 +276,17 @@ class Jellyfin:
     def movie(self, item_detail: NowPlayingData) -> Movie:
         """Retrieve movie details.
 
-        This method obtains detailed information about a movie by processing the user data
-        from the now-playing media item. It calls the relevant Jellyfin endpoint to fetch supplementary
-        information if required.
+        This method obtains detailed information about a movie by processing the user
+        data from the now-playing media item. It calls the relevant Jellyfin endpoint
+        to fetch supplementary information if required.
 
         Args:
-            item_detail (NowPlayingData): JSON data representing the movie item, including user data.
+            item_detail (NowPlayingData): JSON data representing the movie item,
+            including user data.
 
         Returns:
-            Movie: An instance of the Movie model with attributes such as name, runtime, and playback details.
+            Movie: An instance of the Movie model with attributes such as name, runtime,
+            and playback details.
         """
         detail = item_detail["UserData"]
 
@@ -292,14 +309,17 @@ class Jellyfin:
     def episode(self, item_detail: Json[Any]) -> Episode:
         """Retrieve episode details.
 
-        This method fetches detailed information for an episode by making a GET request to the Jellyfin API
-        using the episode's ID as a parameter. It processes the returned user data to construct an Episode object.
+        This method fetches detailed information for an episode by making a GET request
+        to the Jellyfin API using the episode's ID as a parameter. It processes the
+        returned user data to construct an Episode object.
 
         Args:
-            item_detail (Json[Any]): JSON data representing the episode item, including user data.
+            item_detail (Json[Any]): JSON data representing the episode item, including
+            user data.
 
         Returns:
-            Episode: An instance of the Episode model with details such as name, runtime, index, and playback metrics.
+            Episode: An instance of the Episode model with details such as name,
+            runtime, index, and playback metrics.
         """
         params = {"ParentId": item_detail["Id"]}
         data = self.engine.get(self.url + f"/Users/{self.userid}/Items", params=params)
